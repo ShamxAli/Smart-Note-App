@@ -25,12 +25,6 @@
         android:onClick="btnSave"
         android:text="Save" />
 
-    <Button
-        android:id="@+id/btnUpdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="btnUpdate"
-        android:text="Update" />
 
     <Button
         android:id="@+id/btnDelete"

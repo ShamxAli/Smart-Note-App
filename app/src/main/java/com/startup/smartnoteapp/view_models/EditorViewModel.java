@@ -1,15 +1,15 @@
-package com.startup.smartnoteapp;
+package com.startup.smartnoteapp.view_models;
 
 import android.app.Application;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.startup.smartnoteapp.Database.AppDatabase;
-import com.startup.smartnoteapp.Database.Note;
+import com.startup.smartnoteapp.room_db.AppDatabase;
+import com.startup.smartnoteapp.room_db.Note;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -19,7 +19,7 @@ public class EditorViewModel extends AndroidViewModel {
 
     Executor executor = Executors.newSingleThreadExecutor();
     AppDatabase appDatabase;
-    MutableLiveData<Note> liveNote = new MutableLiveData<>();
+    public MutableLiveData<Note> liveNote = new MutableLiveData<>();
 
     public EditorViewModel(@NonNull Application application) {
         super(application);
@@ -37,14 +37,25 @@ public class EditorViewModel extends AndroidViewModel {
         });
     }
 
-    public void insertNote(final String string) {
+    public void insertNote(final String noteText) {
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Note note = liveNote.getValue();
-                note.setText(string);
-                Log.d("MYTAG", "ruLOGOOLOLLOn: " + note);
-                appDatabase.notesDao().insertNote(note);
+                Note noteEntity = liveNote.getValue();
+                if (noteEntity == null) {
+
+                    if (TextUtils.isEmpty(noteText.trim())) {
+                        return;
+                    } else {
+                        noteEntity = new Note(noteText.trim());
+                    }
+
+                } else {
+                    noteEntity.setText(noteText.trim());
+
+                }
+                appDatabase.notesDao().insertNote(noteEntity);
             }
         });
 
@@ -61,7 +72,6 @@ public class EditorViewModel extends AndroidViewModel {
 
 
     }
-
 
 
 }

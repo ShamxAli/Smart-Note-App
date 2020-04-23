@@ -1,8 +1,11 @@
-package com.startup.smartnoteapp.Adapter;
+package com.startup.smartnoteapp.adapter;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -11,7 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.startup.smartnoteapp.Database.Note;
+import com.startup.smartnoteapp.room_db.Note;
 import com.startup.smartnoteapp.EditorActivity;
 import com.startup.smartnoteapp.R;
 
@@ -23,9 +26,20 @@ public class AdapterClass extends RecyclerView.Adapter<AdapterClass.MyViewHolder
 
     List<Note> list;
     Context context;
+    int position;
+
+    private void setPosition(int position) {
+        this.position = position;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
 
     public AdapterClass(Context context, List<Note> list) {
         this.list = list;
+
         this.context = context;
     }
 
@@ -40,20 +54,20 @@ public class AdapterClass extends RecyclerView.Adapter<AdapterClass.MyViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
 
         final Note noteModel = list.get(position);
 
         holder.textView.setText(noteModel.getText());
 
-        // Simple OnClick=====================================================================
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setPosition(holder.getAdapterPosition());
+                return false;
+            }
+        });
 
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(context, "Hellog", Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
         holder.btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,16 +78,9 @@ public class AdapterClass extends RecyclerView.Adapter<AdapterClass.MyViewHolder
             }
         });
 
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, EditorActivity.class);
-                intent.putExtra("DELETE", noteModel.getId());
-                context.startActivity(intent);
-            }
-        });
-
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -84,15 +91,13 @@ public class AdapterClass extends RecyclerView.Adapter<AdapterClass.MyViewHolder
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView textView;
-        Button btnUpdate , btnDelete;
+        Button btnUpdate;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.desgn_tv);
             btnUpdate = itemView.findViewById(R.id.btnUpdate);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
 
     }
-
 }

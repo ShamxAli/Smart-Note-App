@@ -7,22 +7,26 @@ import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.startup.smartnoteapp.Database.AppDatabase;
-import com.startup.smartnoteapp.Database.Note;
+import com.startup.smartnoteapp.room_db.AppDatabase;
+import com.startup.smartnoteapp.room_db.Note;
+import com.startup.smartnoteapp.view_models.EditorViewModel;
 
 public class EditorActivity extends AppCompatActivity {
     EditText editText;
-    Note note;
     EditorViewModel editorViewModel;
+    Button btnSave, btnDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
         editText = findViewById(R.id.et_text);
+        btnSave = findViewById(R.id.btnSave);
+        btnDelete = findViewById(R.id.btnDelete);
         editorViewModel = ViewModelProviders.of(this).get(EditorViewModel.class);
 
         editorViewModel.liveNote.observe(this, new Observer<Note>() {
@@ -41,8 +45,6 @@ public class EditorActivity extends AppCompatActivity {
             int id = bundle.getInt("UPDATE");
             editorViewModel.loadNote(id);
         }
-
-
     }
 
 
@@ -51,12 +53,11 @@ public class EditorActivity extends AppCompatActivity {
             Toast.makeText(this, "Please write something", Toast.LENGTH_SHORT).show();
         } else {
 
-            note = new Note(editText.getText().toString());
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    AppDatabase.getInstance
-                            (getApplicationContext()).notesDao().insertNote(note);
+                    editorViewModel.insertNote(editText.getText().toString());
                 }
             }).start();
             Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
@@ -64,12 +65,6 @@ public class EditorActivity extends AppCompatActivity {
         }
     }
 
-
-    public void btnUpdate(View view) {
-        editorViewModel.insertNote(editText.getText().toString());
-        Toast.makeText(this, "Updated", Toast.LENGTH_SHORT).show();
-        finish();
-    }
 
     @Override
     public void onBackPressed() {

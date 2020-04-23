@@ -1,4 +1,4 @@
-package com.startup.smartnoteapp;
+package com.startup.smartnoteapp.view_models;
 
 import android.app.Application;
 
@@ -6,8 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.startup.smartnoteapp.Database.AppDatabase;
-import com.startup.smartnoteapp.Database.Note;
+import com.startup.smartnoteapp.room_db.AppDatabase;
+import com.startup.smartnoteapp.room_db.Note;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -29,7 +29,19 @@ public class NoteViewModel extends AndroidViewModel {
         return appDatabase.notesDao().getAllNotes();
     }
 
-    public void deleteAllNotes(){
+
+    public void deleteNote(final Note note) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                appDatabase.notesDao().deleteNote(note);
+            }
+        });
+
+    }
+
+
+    public void deleteAllNotes() {
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -37,7 +49,6 @@ public class NoteViewModel extends AndroidViewModel {
             }
         });
     }
-
 
 
 }

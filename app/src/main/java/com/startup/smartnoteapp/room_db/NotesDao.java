@@ -1,4 +1,4 @@
-package com.startup.smartnoteapp.Database;
+package com.startup.smartnoteapp.room_db;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

@@ -1,12 +1,10 @@
-package com.startup.smartnoteapp.Database;
+package com.startup.smartnoteapp.room_db;
 
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-import java.util.Date;
 
 
 @Entity(tableName = "notes")

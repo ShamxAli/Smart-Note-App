@@ -9,13 +9,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
-import com.startup.smartnoteapp.Adapter.AdapterClass;
-import com.startup.smartnoteapp.Database.Note;
+import com.startup.smartnoteapp.adapter.AdapterClass;
+import com.startup.smartnoteapp.room_db.Note;
+import com.startup.smartnoteapp.view_models.NoteViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,18 +28,18 @@ public class MainActivity extends AppCompatActivity {
     AdapterClass adapterClass;
     List<Note> list = new ArrayList<>();
     NoteViewModel noteViewModel;
+    private int position;
 
-
+    /* onCreate() **********************************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initRecyclerView();
-        addList();
         showRecyclerView();
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
-
-
+        registerForContextMenu(recyclerView);
+        position = adapterClass.getPosition();
         // Observing Live Data...
         noteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
             @Override
@@ -46,20 +48,14 @@ public class MainActivity extends AppCompatActivity {
                 list.clear();
                 list.addAll(notes);
                 adapterClass.notifyDataSetChanged();
-
             }
         });
-
     }
+    /* *********************************************************/
 
+    // BREAK
 
-    // Open Editor Fab...
-    public void openEditor(View view) {
-        Intent intent = new Intent(MainActivity.this, EditorActivity.class);
-        startActivity(intent);
-    }
-
-
+    /*==========================================================================================================*/
     void initRecyclerView() {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -71,10 +67,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapterClass);
     }
 
-    void addList() {
-        list.add(new Note("Hello"));
-        list.add(new Note("abc"));
-        list.add(new Note("def"));
+    // Open Editor Fab...
+    public void openEditor(View view) {
+        Intent intent = new Intent(MainActivity.this, EditorActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -99,4 +95,43 @@ public class MainActivity extends AppCompatActivity {
     private void deleteAllNotes() {
         noteViewModel.deleteAllNotes();
     }
+
+
+    /*==========================================================================================================*/
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        getMenuInflater().inflate(R.menu.edit_del_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            // Delete...
+            case R.id.del:
+                Note note = list.get(position);
+                noteViewModel.deleteNote(note);
+                Toast.makeText(this, "Del" + adapterClass.getPosition(), Toast.LENGTH_SHORT).show();
+                return true;
+            // Edit...
+            case R.id.edit:
+                Note noteModel = list.get(position);
+                Intent intent = new Intent(MainActivity.this, EditorActivity.class);
+                intent.putExtra("UPDATE", noteModel.getId());
+                startActivity(intent);
+                Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show();
+                return true;
+            //
+            default:
+                return super.onContextItemSelected(item);
+
+        }
+
+    }
+
 }
