@@ -1,11 +1,14 @@
 package com.startup.smartnoteapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,25 +21,26 @@ import com.startup.smartnoteapp.view_models.EditorViewModel;
 public class EditorActivity extends AppCompatActivity {
     EditText editText;
     EditorViewModel editorViewModel;
-    Button btnSave, btnDelete;
+    Bundle bundle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
         editText = findViewById(R.id.et_text);
-        btnSave = findViewById(R.id.btnSave);
-        btnDelete = findViewById(R.id.btnDelete);
+
         editorViewModel = ViewModelProviders.of(this).get(EditorViewModel.class);
 
         editorViewModel.liveNote.observe(this, new Observer<Note>() {
             @Override
             public void onChanged(Note note) {
                 editText.setText(note.getText());
+                editText.setSelection(editText.getText().length());
             }
         });
 
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
 
         if (bundle == null) {
             setTitle("New Note");
@@ -60,7 +64,6 @@ public class EditorActivity extends AppCompatActivity {
                     editorViewModel.insertNote(editText.getText().toString());
                 }
             }).start();
-            Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -72,8 +75,27 @@ public class EditorActivity extends AppCompatActivity {
         editorViewModel.insertNote(editText.getText().toString());
     }
 
-    public void deleteBtn(View view) {
-        editorViewModel.deleteNote();
-        finish();
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.del_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.f_del) {
+            if (bundle == null) {
+                Toast.makeText(this, "Note has not been created yet", Toast.LENGTH_SHORT).show();
+            } else {
+                editorViewModel.deleteNote();
+                finish();
+            }
+
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

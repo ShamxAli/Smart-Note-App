@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -91,7 +92,7 @@ public class AdapterClass extends RecyclerView.Adapter<AdapterClass.MyViewHolder
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView textView;
-        Button btnUpdate;
+        ImageView btnUpdate;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);

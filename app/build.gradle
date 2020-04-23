@@ -38,6 +38,11 @@ dependencies {
     // Swipe refresh layout
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
 
+    // Swipe refresh layout
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    // xabaras
+    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.2'
+
     // Android Architecture Lifecycle
     def lifecycle_version = "2.2.5"
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
