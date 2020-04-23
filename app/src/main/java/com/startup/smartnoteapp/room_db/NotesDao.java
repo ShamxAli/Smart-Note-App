@@ -16,7 +16,7 @@ public interface NotesDao {
     void insertNote(Note noteEntity);
 
 
-    @Query("SELECT * FROM notes")
+    @Query("SELECT * FROM notes ORDER BY text DESC ")
     LiveData<List<Note>> getAllNotes();
 
     @Query("SELECT * FROM notes WHERE id = :id")

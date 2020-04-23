@@ -2,7 +2,6 @@ package com.startup.smartnoteapp.view_models;
 
 import android.app.Application;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
